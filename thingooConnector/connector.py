@@ -1,7 +1,6 @@
 import requests
 
 from thingooConnector.config import TOKEN_ENDPOINT
-from thingooConnector.device_info import DeviceInfo
 
 
 class ClientCredentials:
@@ -27,11 +26,12 @@ class Token:
 
 class Connector:
 
-    def __init__(self, device_id, host, client_credentials, entities):
-        self._device_info = DeviceInfo(device_id)
+    def __init__(self, device_info, host, client_credentials, entities):
+        self._device_info = device_info
         self._host = host
         self._client_credentials = client_credentials
         self._token = None
+        self._entities = entities
 
     def connect(self):
         self._token = self._get_token()
@@ -47,5 +47,23 @@ class Connector:
         r = requests.post(url, data=request_data)
         return Token(r.json())
 
+    def api_request(self, method, endpoint, data=None):
+        url = f'https://{self._host}/api{endpoint}'
+        headers = {
+            "Authorization": "Bearer " + self._token.access_token(),
+            "Content-Type": "application/json"
+        }
+        return requests.request(method=method, url=url, data=data, headers=headers)
+
+    def _create_registration_form(self):
+        info = self._device_info
+        return {
+            "deviceID": info.device_id(),
+            "macAddress": info.mac_address(),
+            "displayName": info.display_name(),
+            "entities": self._entities
+        }
+
     def _register(self):
-        pass
+        data = self._create_registration_form()
+        self.api_request("POST", "/devices", data)
