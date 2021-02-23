@@ -1,6 +1,6 @@
 import requests
 
-from thingooConnector.config import TOKEN_ENDPOINT
+from config import TOKEN_ENDPOINT
 
 
 class ClientCredentials:
