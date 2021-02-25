@@ -53,7 +53,7 @@ class Connector:
             "Authorization": "Bearer " + self._token.access_token(),
             "Content-Type": "application/json"
         }
-        return requests.request(method=method, url=url, data=data, headers=headers)
+        return requests.request(method=method, url=url, json=data, headers=headers)
 
     def _create_registration_form(self):
         info = self._device_info
