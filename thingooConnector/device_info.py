@@ -4,13 +4,13 @@ def get_mac_address():
 
 
 class DeviceInfo:
-    def __init__(self, device_id, display_name):
-        self._device_id = device_id
+    def __init__(self, key, display_name):
+        self._key = key
         self._display_name = display_name
         self._mac_address = get_mac_address()
 
-    def device_id(self):
-        return self._device_id
+    def key(self):
+        return self._key
 
     def display_name(self):
         return self._display_name

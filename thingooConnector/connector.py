@@ -64,7 +64,7 @@ class Connector:
     def _create_registration_form(self):
         info = self._device_info
         return {
-            "deviceID": info.device_id(),
+            "key": info.key(),
             "macAddress": info.mac_address(),
             "displayName": info.display_name(),
             "entities": self._entities
