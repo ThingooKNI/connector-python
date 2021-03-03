@@ -1,6 +1,6 @@
 import requests
 
-from config import TOKEN_ENDPOINT
+from config import REGISTER_ENDPOINT
 
 
 class ClientCredentials:
@@ -35,6 +35,7 @@ class Connector:
 
     def connect(self):
         self._get_and_save_token()
+        self._register()
 
     def _get_and_save_token(self):
         self._token = self._get_token()
@@ -45,7 +46,7 @@ class Connector:
             "client_id": self._client_credentials.client_id(),
             "client_secret": self._client_credentials.client_secret(),
         }
-        url = f'https://{self._host}{TOKEN_ENDPOINT}'
+        url = f'https://{self._host}{REGISTER_ENDPOINT}'
         r = requests.post(url, data=request_data)
         return Token(r.json())
 

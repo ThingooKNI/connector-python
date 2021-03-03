@@ -19,5 +19,6 @@ def test_json():
 
     data = connector._create_registration_form()
     # FIXME Testing with real macAddress
-    assert str(
-        data) == "{'deviceID': 'test', 'macAddress': '00:00:00:00:00:00', 'displayName': 'test device', 'entities': [{'id': 1, 'key': 'temp', 'displayName': 'temperature', 'type': 'SENSOR', 'unitType': 'DECIMAL', 'unitDisplayName': 'C'}, {'id': 2, 'key': 'hum', 'displayName': 'humidity', 'type': 'SENSOR', 'unitType': 'DECIMAL', 'unitDisplayName': '%'}]}"
+    if str(
+            data) != "{'key': 'test', 'macAddress': '00:00:00:00:00:00', 'displayName': 'test device', 'entities': [{'id': 1, 'key': 'temp', 'displayName': 'temperature', 'type': 'SENSOR', 'unitType': 'DECIMAL', 'unitDisplayName': 'C'}, {'id': 2, 'key': 'hum', 'displayName': 'humidity', 'type': 'SENSOR', 'unitType': 'DECIMAL', 'unitDisplayName': '%'}]}":
+        raise AssertionError
