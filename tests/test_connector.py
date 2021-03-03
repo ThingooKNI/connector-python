@@ -3,11 +3,11 @@ from thingooConnector.device_info import DeviceInfo
 from thingooConnector.entity import Entity
 
 
-def test_get_token():
-    device_info = DeviceInfo("test", "test device")
-    credentials = ClientCredentials("thingoo-device", "SECRET")
-    connector = Connector(device_info, "dev.thingoo.xyz", credentials, [])
-    connector.connect()
+# def test_get_token():
+#     device_info = DeviceInfo("test", "test device")
+#     credentials = ClientCredentials("thingoo-device", "SECRET")
+#     connector = Connector(device_info, "dev.thingoo.xyz", credentials, [])
+#     connector.connect()
 
 
 def test_json():
