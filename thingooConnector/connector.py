@@ -34,14 +34,16 @@ class Connector:
         self._entities = entities
 
     def connect(self):
+        self._get_and_save_token()
+
+    def _get_and_save_token(self):
         self._token = self._get_token()
-        self._register()
 
     def _get_token(self):
         request_data = {
             "grant_type": "client_credentials",
             "client_id": self._client_credentials.client_id(),
-            "client_secret": self._client_credentials.client_secret()
+            "client_secret": self._client_credentials.client_secret(),
         }
         url = f'https://{self._host}{TOKEN_ENDPOINT}'
         r = requests.post(url, data=request_data)
@@ -53,7 +55,11 @@ class Connector:
             "Authorization": "Bearer " + self._token.access_token(),
             "Content-Type": "application/json"
         }
-        return requests.request(method=method, url=url, json=data, headers=headers)
+        response = requests.request(method=method, url=url, json=data, headers=headers)
+        if response.status_code == 401:
+            self._get_and_save_token()
+            response = requests.request(method=method, url=url, json=data, headers=headers)
+        return response
 
     def _create_registration_form(self):
         info = self._device_info
@@ -66,4 +72,4 @@ class Connector:
 
     def _register(self):
         data = self._create_registration_form()
-        self.api_request("POST", "/devices", data)
+        return self.api_request("POST", "/devices", data)
