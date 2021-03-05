@@ -1,6 +1,11 @@
+import logging
+from http import HTTPStatus
+
 import requests
 
 from config import REGISTER_ENDPOINT
+
+logger = logging.getLogger(__name__)
 
 
 class ClientCredentials:
@@ -13,6 +18,21 @@ class ClientCredentials:
 
     def client_secret(self):
         return self._client_secret
+
+
+class HTTPException(Exception):
+    def __init__(self, error_text, status_code, text):
+        super().__init__(f'{error_text}: {status_code} {text}')
+
+
+class RetrieveTokenException(HTTPException):
+    def __init__(self, status_code, text):
+        super().__init__("Fail to retrieve access token", status_code, text)
+
+
+class RegisterDeviceException(HTTPException):
+    def __init__(self, status_code, text):
+        super().__init__("Fail to register device", status_code, text)
 
 
 class Token:
@@ -34,11 +54,19 @@ class Connector:
         self._entities = entities
 
     def connect(self):
-        self._get_and_save_token()
-        self._register()
-
-    def _get_and_save_token(self):
+        logger.info(f'Connecting to {self._host}...')
+        # Get OAuth token or raise RetrieveTokenException
         self._token = self._get_token()
+        # Register device or raise RegisterDeviceException
+        self._register()
+        logger.info(f'Device connected!')
+
+    def _update_token(self):
+        try:
+            self._token = self._get_token()
+            logger.info("New OAuth token retrieved")
+        except RetrieveTokenException:
+            logger.warning("Fail to retrieve OAuth token")
 
     def _get_token(self):
         request_data = {
@@ -47,8 +75,10 @@ class Connector:
             "client_secret": self._client_credentials.client_secret(),
         }
         url = f'https://{self._host}{REGISTER_ENDPOINT}'
-        r = requests.post(url, data=request_data)
-        return Token(r.json())
+        response = requests.post(url, data=request_data)
+        if response.status_code == HTTPStatus.OK:
+            return Token(response.json())
+        raise RetrieveTokenException(response.status_code, response.text)
 
     def api_request(self, method, endpoint, data=None):
         url = f'https://{self._host}/api{endpoint}'
@@ -57,8 +87,8 @@ class Connector:
             "Content-Type": "application/json"
         }
         response = requests.request(method=method, url=url, json=data, headers=headers)
-        if response.status_code == 401:
-            self._get_and_save_token()
+        if response.status_code == HTTPStatus.UNAUTHORIZED:
+            self._update_token()
             response = requests.request(method=method, url=url, json=data, headers=headers)
         return response
 
@@ -73,4 +103,8 @@ class Connector:
 
     def _register(self):
         data = self._create_registration_form()
-        return self.api_request("POST", "/devices", data)
+        response = self.api_request("POST", "/devices", data)
+        if response.status_code == HTTPStatus.OK:
+            logger.info("Device registered successfully")
+        else:
+            raise RegisterDeviceException(response.status_code, response.text)
