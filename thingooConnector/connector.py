@@ -9,6 +9,10 @@ logger = logging.getLogger(__name__)
 
 
 class ClientCredentials:
+    """
+    A class used for store client credentials which are used to get access token
+    """
+
     def __init__(self, client_id, client_secret):
         self._client_id = client_id
         self._client_secret = client_secret
@@ -36,15 +40,26 @@ class RegisterDeviceException(HTTPException):
 
 
 class Token:
-    def __init__(self, json_obj):
-        self._access_token = json_obj["access_token"]
-        self._expires_in = json_obj["expires_in"]
+    """
+    A class used for store token
+    """
+
+    def __init__(self, json):
+        """
+        Create token from json
+        :param json: A dict with token fields
+        """
+        self._access_token = json["access_token"]
+        self._expires_in = json["expires_in"]
 
     def access_token(self):
         return self._access_token
 
 
 class Connector:
+    """
+    Connector class to Thingoo instance
+    """
 
     def __init__(self, device_info, host, client_credentials, entities):
         self._device_info = device_info
@@ -54,6 +69,9 @@ class Connector:
         self._entities = entities
 
     def connect(self):
+        """
+        Connect to Thingoo instance: get token and register device
+        """
         logger.info(f'Connecting to {self._host}...')
         # Get OAuth token or raise RetrieveTokenException
         self._token = self._get_token()
@@ -62,6 +80,9 @@ class Connector:
         logger.info(f'Device connected!')
 
     def _update_token(self):
+        """
+        Update token stored in self._token
+        """
         try:
             self._token = self._get_token()
             logger.info("New OAuth token retrieved")
@@ -69,6 +90,11 @@ class Connector:
             logger.warning("Fail to retrieve OAuth token")
 
     def _get_token(self):
+        """
+        Get OAuth access token
+        :return: :class:`Token`
+        :raises: :class:`RetrieveTokenException`
+        """
         request_data = {
             "grant_type": "client_credentials",
             "client_id": self._client_credentials.client_id(),
@@ -81,6 +107,15 @@ class Connector:
         raise RetrieveTokenException(response.status_code, response.text)
 
     def api_request(self, method, endpoint, data=None):
+        """
+        Send request to api
+        :param method: A HTTP Method name GET/POST etc.
+        :type method: str
+        :param endpoint: A final endpoint, after default api prefix
+        :type endpoint: str
+        :param data: Optional data to send as json (if requests needs it)
+        :return: :class:`Response`
+        """
         url = f'https://{self._host}/api{endpoint}'
         headers = {
             "Authorization": "Bearer " + self._token.access_token(),
@@ -88,11 +123,16 @@ class Connector:
         }
         response = requests.request(method=method, url=url, json=data, headers=headers)
         if response.status_code == HTTPStatus.UNAUTHORIZED:
+            # Token expired, update token and try again
             self._update_token()
             response = requests.request(method=method, url=url, json=data, headers=headers)
         return response
 
     def _create_registration_form(self):
+        """
+        Create register form dict
+        :return: A dict with key, macAddress, displayName and entities
+        """
         info = self._device_info
         return {
             "key": info.key(),
@@ -102,6 +142,10 @@ class Connector:
         }
 
     def _register(self):
+        """
+        Send register POST request to api
+        :raises: :class:`RegisterDeviceException`
+        """
         data = self._create_registration_form()
         response = self.api_request("POST", "/devices", data)
         if response.status_code == HTTPStatus.OK:
