@@ -23,7 +23,7 @@ from thingooConnector.entity import Entity
 
 device_info = DeviceInfo("testDevice", "test device")
 credentials = ClientCredentials("thingoo-device", "CLIENT_SECRET")
-entities = [Entity("temp", "temperature", "SENSOR", "DECIMAL", "C")]
+entities = [Entity("temp", "SENSOR", "DECIMAL", "C")]
 connector = Connector(device_info, "dev.thingoo.xyz", credentials, entities)
 connector.connect()
 ```
