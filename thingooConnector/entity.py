@@ -1,6 +1,5 @@
 class Entity:
-    def __init__(self, id_val, key, display_name, type_val, unit_type, unit_display_type):
-        self._id = id_val
+    def __init__(self, key, display_name, type_val, unit_type, unit_display_type):
         self._key = key
         self._display_name = display_name
         self._type = type_val
@@ -13,7 +12,6 @@ class Entity:
 
     def __repr__(self):
         return str({
-            "id": self._id,
             "key": self._key,
             "displayName": self._display_name,
             "type": self._type,
