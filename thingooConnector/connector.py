@@ -1,9 +1,10 @@
+import json
 import logging
 from http import HTTPStatus
 
 import requests
 
-from config import REGISTER_ENDPOINT
+from thingooConnector.config import REGISTER_ENDPOINT
 
 logger = logging.getLogger(__name__)
 
