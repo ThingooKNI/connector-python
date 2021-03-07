@@ -5,6 +5,7 @@ from http import HTTPStatus
 import requests
 
 from thingooConnector.config import REGISTER_ENDPOINT
+from thingooConnector.encoder import ComplexEncoder
 
 logger = logging.getLogger(__name__)
 
@@ -122,11 +123,12 @@ class Connector:
             "Authorization": "Bearer " + self._token.access_token(),
             "Content-Type": "application/json"
         }
-        response = requests.request(method=method, url=url, json=data, headers=headers)
+        data = json.dumps(data, cls=ComplexEncoder)
+        response = requests.request(method=method, url=url, data=data, headers=headers)
         if response.status_code == HTTPStatus.UNAUTHORIZED:
             # Token expired, update token and try again
             self._update_token()
-            response = requests.request(method=method, url=url, json=data, headers=headers)
+            response = requests.request(method=method, url=url, data=data, headers=headers)
         return response
 
     def _create_registration_form(self):
