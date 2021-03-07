@@ -155,3 +155,21 @@ class Connector:
             logger.info("Device registered successfully")
         else:
             raise RegisterDeviceException(response.status_code, response.text)
+
+    def publish_entity_reading(self, entity, reading):
+        """
+        Publish reading from sensor to api
+        :param entity: An Entity class
+        :type entity: :class:`Entity`
+        :param reading: Reading value
+        """
+        data = {
+            "deviceKey": self._device_info.key(),
+            "entityKey": entity.key(),
+            "value": reading
+        }
+        response = self.api_request("POST", "/readings", data)
+        if response.status_code == HTTPStatus.OK:
+            logger.info(f'Reading {reading} from entity {entity.key()} published!')
+        else:
+            logger.warning(f'Fail to publish {reading} from entity {entity.key()} {response.text}')
