@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 class ClientCredentials:
     """
-    A class used for store client credentials which are used to get access token
+         A class used for store client credentials which are used to get access token.
     """
 
     def __init__(self, client_id, client_secret):
@@ -32,24 +32,24 @@ class HTTPException(Exception):
         super().__init__(f'{error_text}: {status_code} {text}')
 
 
-class RetrieveTokenException(HTTPException):
+class TokenRetrievalException(HTTPException):
     def __init__(self, status_code, text):
-        super().__init__("Fail to retrieve access token", status_code, text)
+        super().__init__("Failed to retrieve access token", status_code, text)
 
 
-class RegisterDeviceException(HTTPException):
+class DeviceRegistrationException(HTTPException):
     def __init__(self, status_code, text):
-        super().__init__("Fail to register device", status_code, text)
+        super().__init__("Failed to register device", status_code, text)
 
 
 class Token:
     """
-    A class used for store token
+    A class used to store the access token.
     """
 
     def __init__(self, json):
         """
-        Create token from json
+        Creates a token instance from the provided JSON.
         :param json: A dict with token fields
         """
         self._access_token = json["access_token"]
@@ -61,7 +61,7 @@ class Token:
 
 class Connector:
     """
-    Connector class to Thingoo instance
+    A class used for connecting the device to a chosen Thingoo instance.
     """
 
     def __init__(self, device_info, host, client_credentials, entities):
@@ -89,7 +89,7 @@ class Connector:
         try:
             self._token = self._get_token()
             logger.info("New OAuth token retrieved")
-        except RetrieveTokenException:
+        except TokenRetrievalException:
             logger.warning("Fail to retrieve OAuth token")
 
     def _get_token(self):
@@ -107,7 +107,7 @@ class Connector:
         response = requests.post(url, data=request_data)
         if response.status_code == HTTPStatus.OK:
             return Token(response.json())
-        raise RetrieveTokenException(response.status_code, response.text)
+        raise TokenRetrievalException(response.status_code, response.text)
 
     @staticmethod
     def _send_request(method, url, data, headers):
@@ -169,7 +169,7 @@ class Connector:
         if response.status_code == HTTPStatus.OK:
             logger.info("Device registered successfully")
         else:
-            raise RegisterDeviceException(response.status_code, response.text)
+            raise DeviceRegistrationException(response.status_code, response.text)
 
     def publish_entity_reading(self, entity, reading):
         """
