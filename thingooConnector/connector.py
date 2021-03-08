@@ -108,6 +108,20 @@ class Connector:
             return Token(response.json())
         raise RetrieveTokenException(response.status_code, response.text)
 
+    @staticmethod
+    def _send_request(method, url, data, headers):
+        """
+        Send request to given URL
+        :param method: A HTTP method
+        :type method: str
+        :param url: A HTTP request url
+        :type url: str
+        :param data: A data to be send
+        :param headers: A HTTP headers
+        :return: :class:`Response`
+        """
+        return requests.request(method=method, url=url, data=data, headers=headers)
+
     def api_request(self, method, endpoint, data=None):
         """
         Send request to api
@@ -124,11 +138,11 @@ class Connector:
             "Content-Type": "application/json"
         }
         data = json.dumps(data, cls=ComplexEncoder)
-        response = requests.request(method=method, url=url, data=data, headers=headers)
+        response = self._send_request(method, url, data, headers)
         if response.status_code == HTTPStatus.UNAUTHORIZED:
             # Token expired, update token and try again
             self._update_token()
-            response = requests.request(method=method, url=url, data=data, headers=headers)
+            response = self._send_request(method, url, data, headers)
         return response
 
     def _create_registration_form(self):
