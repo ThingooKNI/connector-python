@@ -20,10 +20,18 @@ Python library for devices to connect to Thingoo platform
 from thingooConnector.connector import Connector, ClientCredentials
 from thingooConnector.device_info import DeviceInfo
 from thingooConnector.entity import Entity
+import random
+
+
+def data_function():
+    return float(random.randrange(100, 500))/100
 
 device_info = DeviceInfo("testDevice", "test device")
 credentials = ClientCredentials("thingoo-device", "CLIENT_SECRET")
-entities = [Entity("temp", "SENSOR", "DECIMAL", "C")]
-connector = Connector(device_info, "dev.thingoo.xyz", credentials, entities)
+temp = Entity("temp", "SENSOR", "DECIMAL", "C")
+connector = Connector(device_info, "dev.thingoo.xyz", credentials, [temp])
 connector.connect()
+# temp.send_reading(connector,1.0) # Send a single reading to Thingoo instance
+# Or send with given interval
+temp.send_readings(connector, 10, data_function) # Send a reading every 10 seconds
 ```
