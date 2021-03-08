@@ -4,6 +4,7 @@ from http import HTTPStatus
 
 import requests
 
+from thingooConnector import config
 from thingooConnector.config import REGISTER_ENDPOINT
 from thingooConnector.encoder import ComplexEncoder
 
@@ -164,7 +165,7 @@ class Connector:
         :raises: :class:`RegisterDeviceException`
         """
         data = self._create_registration_form()
-        response = self.api_request("POST", "/devices", data)
+        response = self.api_request("POST", config.DEVICES, data)
         if response.status_code == HTTPStatus.OK:
             logger.info("Device registered successfully")
         else:
@@ -182,7 +183,7 @@ class Connector:
             "entityKey": entity.key(),
             "value": reading
         }
-        response = self.api_request("POST", "/readings", data)
+        response = self.api_request("POST", config.READINGS, data)
         if response.status_code == HTTPStatus.OK:
             logger.info(f'Reading {reading} from entity {entity.key()} published!')
         else:
