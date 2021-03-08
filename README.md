@@ -3,17 +3,17 @@ Python library for devices to connect to Thingoo platform
 
 # Installation
 1. Install required dependencies:
-```shell script
-   $ pip install -r requirements.txt
-```
+    ```shell script
+       $ pip install -r requirements.txt
+    ```
 1. Build the library (you will get **.whl** in **dist** directory):
-```shell script
-   $ python setup.py bdist_wheel
-```
+    ```shell script
+       $ python setup.py bdist_wheel
+    ```
 1. Now you can install it via pip:
-```shell script
-   $ pip install dist/thingooConnector-*.whl
-```
+    ```shell script
+       $ pip install dist/thingooConnector-*.whl
+    ```
 
 # Basic usage
 ```python
