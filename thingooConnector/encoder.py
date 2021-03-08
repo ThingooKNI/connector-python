@@ -2,8 +2,8 @@ import json
 
 
 class ComplexEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if hasattr(obj, 'to_json'):
-            return obj.to_json()
+    def default(self, o):  # pylint: disable=E0202
+        if hasattr(o, 'to_json'):
+            return o.to_json()
         else:
-            return json.JSONEncoder.default(self, obj)
+            return json.JSONEncoder.default(self, o)
