@@ -1,12 +1,12 @@
-from thingooConnector.connector import ClientCredentials, Connector
 from thingooConnector.device_info import DeviceInfo
 from thingooConnector.entity import Entity
+from thingooConnector.httpconnector import ClientCredentials, HTTPConnector
 
 
 # def test_get_token():
 #     device_info = DeviceInfo("test", "test device")
 #     credentials = ClientCredentials("thingoo-device", "SECRET")
-#     connector = Connector(device_info, "dev.thingoo.xyz", credentials, [])
+#     connector = HTTPConnector(device_info, "dev.thingoo.xyz", credentials, [])
 #     connector.connect()
 
 
@@ -15,7 +15,7 @@ def test_json():
     credentials = ClientCredentials("#", "#")
     temp = Entity("temp", "SENSOR", "DECIMAL", "C")
     hum = Entity("hum", "SENSOR", "DECIMAL", "%")
-    connector = Connector(device_info, "#", credentials, [temp, hum])
+    connector = HTTPConnector(device_info, "#", credentials, [temp, hum])
 
     data = connector._create_registration_form()
     # FIXME Testing with real macAddress
