@@ -1,9 +1,12 @@
+import json
 import logging
 from http import HTTPStatus
 
 import requests
 
-from config import REGISTER_ENDPOINT
+from thingooConnector import config
+from thingooConnector.config import REGISTER_ENDPOINT
+from thingooConnector.encoder import ComplexEncoder
 
 logger = logging.getLogger(__name__)
 
@@ -106,6 +109,20 @@ class Connector:
             return Token(response.json())
         raise TokenRetrievalException(response.status_code, response.text)
 
+    @staticmethod
+    def _send_request(method, url, data, headers):
+        """
+        Send request to given URL
+        :param method: A HTTP method
+        :type method: str
+        :param url: A HTTP request url
+        :type url: str
+        :param data: A data to be send
+        :param headers: A HTTP headers
+        :return: :class:`Response`
+        """
+        return requests.request(method=method, url=url, data=data, headers=headers)
+
     def api_request(self, method, endpoint, data=None):
         """
         Send request to api
@@ -121,11 +138,12 @@ class Connector:
             "Authorization": "Bearer " + self._token.access_token(),
             "Content-Type": "application/json"
         }
-        response = requests.request(method=method, url=url, json=data, headers=headers)
+        data = json.dumps(data, cls=ComplexEncoder)
+        response = self._send_request(method, url, data, headers)
         if response.status_code == HTTPStatus.UNAUTHORIZED:
             # Token expired, update token and try again
             self._update_token()
-            response = requests.request(method=method, url=url, json=data, headers=headers)
+            response = self._send_request(method, url, data, headers)
         return response
 
     def _create_registration_form(self):
@@ -147,8 +165,26 @@ class Connector:
         :raises: :class:`RegisterDeviceException`
         """
         data = self._create_registration_form()
-        response = self.api_request("POST", "/devices", data)
+        response = self.api_request("POST", config.DEVICES, data)
         if response.status_code == HTTPStatus.OK:
             logger.info("Device registered successfully")
         else:
             raise DeviceRegistrationException(response.status_code, response.text)
+
+    def publish_entity_reading(self, entity, reading):
+        """
+        Publish reading from sensor to api
+        :param entity: An Entity class
+        :type entity: :class:`Entity`
+        :param reading: Reading value
+        """
+        data = {
+            "deviceKey": self._device_info.key(),
+            "entityKey": entity.key(),
+            "value": reading
+        }
+        response = self.api_request("POST", config.READINGS, data)
+        if response.status_code == HTTPStatus.OK:
+            logger.info(f'Reading {reading} from entity {entity.key()} published!')
+        else:
+            logger.warning(f'Fail to publish {reading} from entity {entity.key()} {response.text}')
