@@ -87,9 +87,9 @@ class HTTPConnector(Connector):
         """
         try:
             self._token = self._get_token()
-            logger.info("New OAuth token retrieved")
+            logger.info("New JWT retrieved")
         except TokenRetrievalException:
-            logger.warning("Fail to retrieve OAuth token")
+            logger.warning("Fail to retrieve JWT")
 
     def _get_token(self):
         """
