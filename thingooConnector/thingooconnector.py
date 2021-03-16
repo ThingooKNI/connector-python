@@ -5,7 +5,7 @@ from thingooConnector.mqttconnector import MQTTConnector
 
 
 class ThingooConnector(Connector):
-    def __init__(self, host, device_info, entities, client_credentials, userdata=None, http_only=False):
+    def __init__(self, host, device_info, entities, client_credentials, mqtt_credentials=None, http_only=False):
         """
         :param host: Thingoo host
         :param device_info: A device info object
@@ -13,18 +13,16 @@ class ThingooConnector(Connector):
         :param entities: A list of entities
         :param client_credentials: A ClientCredentials object used to get access_token
         :type device_info: :class:`ClientCredentials`
-        :param userdata: A UserData object used to connect to MQTT
-        :type device_info: :class:`UserData`
+        :param mqtt_credentials: A UserData object used to connect to MQTT
+        :type mqtt_credentials: :class:`MQTTCredentials`
         :param http_only: A boolean value that indicates if the device should only use http without connecting to mqtt
         :type http_only: bool
         """
-        if userdata is None:
-            userdata = {}
         super().__init__(host, device_info, entities)
         self._http_connector = HTTPConnector(device_info, host, client_credentials, entities)
         self._http_only = http_only
         if not self._http_only:
-            self._mqtt_connector = MQTTConnector(host, device_info, entities, userdata)
+            self._mqtt_connector = MQTTConnector(host, device_info, entities, mqtt_credentials)
 
     def connect(self):
         # Get access_token and register device via http

@@ -7,7 +7,7 @@ from thingooConnector.connector import Connector
 logger = logging.getLogger(__name__)
 
 
-class Userdata:
+class MQTTCredentials:
     def __init__(self, username, password):
         self._username = username
         self._password = password
@@ -20,11 +20,11 @@ class Userdata:
 
 
 class MQTTConnector(Connector):
-    def __init__(self, host, device_info, entities, userdata, port=443):
+    def __init__(self, host, device_info, entities, mqtt_credentials, port=443):
         super().__init__(host, device_info, entities)
         self._port = port
         self._client = None
-        self._userdata = userdata
+        self._mqtt_credentials = mqtt_credentials
         self._device_info = device_info
 
     def connect(self):
@@ -32,7 +32,7 @@ class MQTTConnector(Connector):
             client_id=self._device_info.key() + "ABCDEFGH",  # TODO Generate identifier
             transport="websockets"
         )
-        self._client.username_pw_set(self._userdata.username(), self._userdata.password())
+        self._client.username_pw_set(self._mqtt_credentials.username(), self._mqtt_credentials.password())
         self._client.on_connect = self._on_connect
         self._client.tls_set()
         self._client.connect(self._host, port=self._port)
