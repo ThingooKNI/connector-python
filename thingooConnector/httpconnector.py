@@ -65,7 +65,7 @@ class HTTPConnector(Connector):
     A class used for connecting the device to a chosen Thingoo instance.
     """
 
-    def __init__(self, device_info, host, client_credentials, entities):
+    def __init__(self, host, device_info, entities, client_credentials):
         super().__init__(host, device_info, entities)
         self._client_credentials = client_credentials
         self._token = None

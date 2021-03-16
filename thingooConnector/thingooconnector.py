@@ -19,7 +19,7 @@ class ThingooConnector(Connector):
         :type http_only: bool
         """
         super().__init__(host, device_info, entities)
-        self._http_connector = HTTPConnector(device_info, host, client_credentials, entities)
+        self._http_connector = HTTPConnector(host, device_info, entities, client_credentials)
         self._http_only = http_only
         if not self._http_only:
             self._mqtt_connector = MQTTConnector(host, device_info, entities, mqtt_credentials)
