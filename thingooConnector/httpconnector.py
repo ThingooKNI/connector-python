@@ -5,7 +5,7 @@ from http import HTTPStatus
 import requests
 
 from thingooConnector import config
-from thingooConnector.config import REGISTER_ENDPOINT
+from thingooConnector.config import TOKEN_ENDPOINT
 from thingooConnector.connector import Connector
 from thingooConnector.encoder import ComplexEncoder
 
@@ -102,7 +102,7 @@ class HTTPConnector(Connector):
             "client_id": self._client_credentials.client_id(),
             "client_secret": self._client_credentials.client_secret(),
         }
-        url = f'https://{self._host}{REGISTER_ENDPOINT}'
+        url = f'https://{self._host}{TOKEN_ENDPOINT}'
         response = requests.post(url, data=request_data)
         if response.status_code == HTTPStatus.OK:
             return Token(response.json())
