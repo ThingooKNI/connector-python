@@ -15,7 +15,7 @@ def test_json():
     credentials = ClientCredentials("#", "#")
     temp = Entity("temp", "SENSOR", "DECIMAL", "C")
     hum = Entity("hum", "SENSOR", "DECIMAL", "%")
-    connector = HTTPConnector(device_info, "#", credentials, [temp, hum])
+    connector = HTTPConnector("#", device_info, [temp, hum], credentials)
 
     data = connector._create_registration_form()
     # FIXME Testing with real macAddress
