@@ -1,6 +1,6 @@
 from thingooConnector.device_info import DeviceInfo
 from thingooConnector.entity import Entity
-from thingooConnector.httpconnector import ClientCredentials, HTTPConnector
+from thingooConnector.httpconnector import HTTPCredentials, HTTPConnector
 
 
 # def test_get_token():
@@ -12,7 +12,7 @@ from thingooConnector.httpconnector import ClientCredentials, HTTPConnector
 
 def test_json():
     device_info = DeviceInfo("test", "test device")
-    credentials = ClientCredentials("#", "#")
+    credentials = HTTPCredentials("#", "#")
     temp = Entity("temp", "SENSOR", "DECIMAL", "C")
     hum = Entity("hum", "SENSOR", "DECIMAL", "%")
     connector = HTTPConnector("#", device_info, [temp, hum], credentials)

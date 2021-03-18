@@ -12,9 +12,9 @@ from thingooConnector.encoder import ComplexEncoder
 logger = logging.getLogger(__name__)
 
 
-class ClientCredentials:
+class HTTPCredentials:
     """
-         A class used for store client credentials which are used to get access token.
+    A class used for store client credentials which are used to get access token via HTTP.
     """
 
     def __init__(self, client_id, client_secret):
@@ -65,9 +65,9 @@ class HTTPConnector(Connector):
     A class used for connecting the device to a chosen Thingoo instance.
     """
 
-    def __init__(self, host, device_info, entities, client_credentials):
+    def __init__(self, host, device_info, entities, http_credentials):
         super().__init__(host, device_info, entities)
-        self._client_credentials = client_credentials
+        self._http_credentials = http_credentials
         self._token = None
 
     def connect(self):
@@ -99,8 +99,8 @@ class HTTPConnector(Connector):
         """
         request_data = {
             "grant_type": "client_credentials",
-            "client_id": self._client_credentials.client_id(),
-            "client_secret": self._client_credentials.client_secret(),
+            "client_id": self._http_credentials.client_id(),
+            "client_secret": self._http_credentials.client_secret(),
         }
         url = f'https://{self._host}{TOKEN_ENDPOINT}'
         response = requests.post(url, data=request_data)

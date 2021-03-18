@@ -20,7 +20,7 @@ Python library for devices to connect to Thingoo platform
 
 # Basic usage
 ```python
-from thingooConnector.httpconnector import HTTPConnector, ClientCredentials
+from thingooConnector.httpconnector import HTTPConnector, HTTPCredentials
 from thingooConnector.device_info import DeviceInfo
 from thingooConnector.entity import Entity
 import random
