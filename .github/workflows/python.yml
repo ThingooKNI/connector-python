@@ -11,6 +11,7 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v2
     - name: Lint Code Base
       uses: github/super-linter@v3
       env:
