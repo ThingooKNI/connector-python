@@ -1,4 +1,5 @@
-from abc import ABC, abstractmethod
+from abc import ABC
+from abc import abstractmethod
 
 
 class Connector(ABC):
@@ -21,7 +22,7 @@ class Connector(ABC):
             "key": info.key(),
             "macAddress": info.mac_address(),
             "displayName": info.display_name(),
-            "entities": self._entities
+            "entities": self._entities,
         }
 
     @abstractmethod

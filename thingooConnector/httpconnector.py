@@ -30,7 +30,7 @@ class HTTPCredentials:
 
 class HTTPException(Exception):
     def __init__(self, error_text, status_code, text):
-        super().__init__(f'{error_text}: {status_code} {text}')
+        super().__init__(f"{error_text}: {status_code} {text}")
 
 
 class TokenRetrievalException(HTTPException):
@@ -74,12 +74,12 @@ class HTTPConnector(Connector):
         """
         Connect to Thingoo instance: get token and register device
         """
-        logger.info(f'Connecting to {self._host}...')
+        logger.info(f"Connecting to {self._host}...")
         # Get OAuth token or raise RetrieveTokenException
         self._token = self._get_token()
         # Register device or raise RegisterDeviceException
         self._register()
-        logger.info(f'Device connected!')
+        logger.info("Device connected!")
 
     def _update_token(self):
         """
@@ -102,7 +102,7 @@ class HTTPConnector(Connector):
             "client_id": self._http_credentials.client_id(),
             "client_secret": self._http_credentials.client_secret(),
         }
-        url = f'https://{self._host}{TOKEN_ENDPOINT}'
+        url = f"https://{self._host}{TOKEN_ENDPOINT}"
         response = requests.post(url, data=request_data)
         if response.status_code == HTTPStatus.OK:
             return Token(response.json())
@@ -132,10 +132,10 @@ class HTTPConnector(Connector):
         :param data: Optional data to send as json (if requests needs it)
         :return: :class:`Response`
         """
-        url = f'https://{self._host}/api{endpoint}'
+        url = f"https://{self._host}/api{endpoint}"
         headers = {
             "Authorization": "Bearer " + self._token.access_token(),
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
         }
         data = json.dumps(data, cls=ComplexEncoder)
         response = self._send_request(method, url, data, headers)
@@ -167,10 +167,12 @@ class HTTPConnector(Connector):
         data = {
             "deviceKey": self._device_info.key(),
             "entityKey": entity.key(),
-            "value": reading
+            "value": reading,
         }
         response = self.api_request("POST", config.READINGS, data)
         if response.status_code == HTTPStatus.OK:
-            logger.info(f'Reading {reading} from entity {entity.key()} published!')
+            logger.info(f"Reading {reading} from entity {entity.key()} published!")
         else:
-            logger.warning(f'Fail to publish {reading} from entity {entity.key()} {response.text}')
+            logger.warning(
+                f"Fail to publish {reading} from entity {entity.key()} {response.text}"
+            )
