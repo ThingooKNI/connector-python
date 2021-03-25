@@ -29,8 +29,7 @@ class ThingooConnector(Connector):
         self._http_connector = HTTPConnector(
             host, device_info, entities, http_credentials
         )
-        self._http_only = http_only
-        if not self._http_only:
+        if not http_only:
             self._mqtt_connector = MQTTConnector(
                 host, device_info, entities, mqtt_credentials
             )
@@ -38,14 +37,17 @@ class ThingooConnector(Connector):
     def connect(self):
         # Get access_token and register device via http
         self._http_connector.connect()
-        if not self._http_only:
+        if not self._is_http_only():
             # Connect to MQTT
             self._mqtt_connector.connect()
 
     def publish_entity_reading(self, entity, reading):
-        if not self._http_only:
+        if self._is_http_only():
             # Publish via HTTP
-            self._mqtt_connector.publish_entity_reading(entity, reading)
+            self._http_connector.publish_entity_reading(entity, reading)
         else:
             # Publish via MQTT
-            self._http_connector.publish_entity_reading(entity, reading)
+            self._mqtt_connector.publish_entity_reading(entity, reading)
+
+    def _is_http_only(self):
+        return self._mqtt_connector is None
