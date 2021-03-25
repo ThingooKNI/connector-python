@@ -20,20 +20,32 @@ Python library for devices to connect to Thingoo platform
 
 # Basic usage
 ```python
-from thingooConnector.httpconnector import HTTPConnector, HTTPCredentials
+import random
 from thingooConnector.device_info import DeviceInfo
 from thingooConnector.entity import Entity
-import random
+from thingooConnector.httpconnector import HTTPCredentials
+from thingooConnector.mqttconnector import MQTTCredentials
+from thingooConnector.thingooconnector import ThingooConnector
 
 
 def data_function():
     return float(random.randrange(100, 500))/100
 
-device_info = DeviceInfo("testDevice", "test device")
-credentials = ClientCredentials("thingoo-device", "CLIENT_SECRET")
+# Device configuration
+device_info = DeviceInfo("testDevice3", "test device")
 temp = Entity("temp", "SENSOR", "DECIMAL", "C")
-connector = HTTPConnector(device_info, "dev.thingoo.xyz", credentials, [temp])
+hum = Entity("hum", "SENSOR", "DECIMAL", "C")
+entities = [temp, hum]
+
+# Credentials
+http_credentials = HTTPCredentials("thingoo-device", "---CLIENT_SECRET----")
+mqtt_credentials = MQTTCredentials("---USERNAME---", "---PASSWORD---")
+
+# Connector
+connector = ThingooConnector("dev.thingoo.xyz", device_info, entities, http_credentials, mqtt_credentials)
 connector.connect()
+
+# Send readings
 # temp.send_reading(connector,1.0) # Send a single reading to Thingoo instance
 # Or send with given interval
 temp.send_readings(connector, 10, data_function) # Send a reading every 10 seconds
