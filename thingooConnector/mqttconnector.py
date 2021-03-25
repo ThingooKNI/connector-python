@@ -2,6 +2,7 @@ import logging
 
 import paho.mqtt.client as mqtt
 
+from thingooConnector.config import DEVICE_READINGS
 from thingooConnector.connector import Connector
 
 logger = logging.getLogger(__name__)
@@ -51,5 +52,7 @@ class MQTTConnector(Connector):
         pass
 
     def publish_entity_reading(self, entity, reading):
-        # TODO Implement publishing entity reading
-        pass
+        topic = DEVICE_READINGS.format(
+            device_key=self._device_info.key(), entity_key=entity.key()
+        )
+        self._client.publish(topic, reading, qos=1)
