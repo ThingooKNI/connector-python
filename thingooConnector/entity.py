@@ -26,7 +26,9 @@ class Entity:
         :param data_function: Function which return data from sensor
         """
         # Get reading
-        threading.Timer(interval, self.send_readings, [connector, interval, data_function]).start()
+        threading.Timer(
+            interval, self.send_readings, [connector, interval, data_function]
+        ).start()
         value = data_function()
         self.send_reading(connector, value)
 
@@ -44,5 +46,5 @@ class Entity:
             "key": self._key,
             "type": self._type,
             "unitType": self._unit_type,
-            "unitDisplayName": self._unit_display_type
+            "unitDisplayName": self._unit_display_type,
         }
