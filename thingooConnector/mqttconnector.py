@@ -27,6 +27,7 @@ class MQTTConnector(Connector):
         self._client = None
         self._mqtt_credentials = mqtt_credentials
         self._device_info = device_info
+        self._subscriptions = {}
 
     def connect(self):
         self._client = mqtt.Client(
@@ -37,8 +38,10 @@ class MQTTConnector(Connector):
             self._mqtt_credentials.username(), self._mqtt_credentials.password()
         )
         self._client.on_connect = self._on_connect
+        self._client.on_message = self._on_message
         self._client.tls_set()
         self._client.connect(self._host, port=self._port)
+        self._client.loop_start()
 
     def _on_connect(self, client, userdata, flags, rc):
         if rc == 0:
@@ -46,6 +49,25 @@ class MQTTConnector(Connector):
         else:
             logger.warning(f"Connection to MQTT failed with status code: {rc}")
         self._register()
+        self._renew_subscriptions()
+
+    def _renew_subscriptions(self):
+        for topic, function in self._subscriptions.items():
+            self.subscribe_topic(topic, function)
+
+    def _on_message(self, client, userdata, msg):
+        topic = msg.topic
+        payload = str(msg.payload)
+        if topic in self._subscriptions:
+            function = self._subscriptions[topic]
+            if function is not None:
+                function(topic, payload)
+            else:
+                self._mqtt_message_default_function(topic, payload)
+
+    def _mqtt_message_default_function(self, topic, payload):
+        text = f"{self._host}:{self._port} {topic} {payload}"
+        logger.info(text)
 
     def _register(self):
         # Not used in the current implementation
@@ -56,3 +78,8 @@ class MQTTConnector(Connector):
             device_key=self._device_info.key(), entity_key=entity.key()
         )
         self._client.publish(topic, reading, qos=1)
+        self.subscribe_topic(topic + "/response")
+
+    def subscribe_topic(self, topic, function=None):
+        self._client.subscribe(topic)
+        self._subscriptions[topic] = function
