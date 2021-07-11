@@ -79,6 +79,7 @@ class MQTTConnector(Connector):
         )
         self._client.publish(topic, reading, qos=1)
         self.subscribe_topic(topic + "/response")
+        logger.info(f"Reading {reading} from entity {entity.key()} published via MQTT!")
 
     def subscribe_topic(self, topic, function=None):
         self._client.subscribe(topic)

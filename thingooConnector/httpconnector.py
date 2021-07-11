@@ -171,7 +171,7 @@ class HTTPConnector(Connector):
         }
         response = self.api_request("POST", config.READINGS, data)
         if response.status_code == HTTPStatus.OK:
-            logger.info(f"Reading {reading} from entity {entity.key()} published!")
+            logger.info(f"Reading {reading} from entity {entity.key()} published via HTTP!")
         else:
             logger.warning(
                 f"Fail to publish {reading} from entity {entity.key()} {response.text}"
