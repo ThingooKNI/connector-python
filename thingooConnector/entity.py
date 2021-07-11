@@ -5,11 +5,15 @@ logger = logging.getLogger(__name__)
 
 
 class Entity:
-    def __init__(self, key, type_val, unit_type, unit_display_type):
+    def __init__(self, key, type_val, value_type, unit_display_type):
         self._key = key
         self._type = type_val
-        self._unit_type = unit_type
+        self._value_type = value_type
         self._unit_display_type = unit_display_type
+
+    @staticmethod
+    def on_command(connector, callback_function):
+        connector.subscribe_topic("/devices/testDevice3/entities/light_switch/command", callback_function)
 
     def send_reading(self, connector, value):
         """
@@ -48,6 +52,6 @@ class Entity:
         return {
             "key": self._key,
             "type": self._type,
-            "unitType": self._unit_type,
+            "valueType": self._value_type,
             "unitDisplayName": self._unit_display_type,
         }
