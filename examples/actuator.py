@@ -1,5 +1,3 @@
-import random
-
 from examples.credentials import HTTP_CLIENT_ID, HTTP_CLIENT_SECRET, MQTT_USERNAME, MQTT_PASSWORD
 from thingooConnector.device_info import DeviceInfo
 from thingooConnector.entity import Entity
