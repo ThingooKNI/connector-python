@@ -49,9 +49,9 @@ class ThingooConnector(Connector):
             # Publish via MQTT
             self._mqtt_connector.publish_entity_reading(entity, reading)
 
-    def subscribe_topic(self, topic, callback_function):
+    def subscribe_to_commands(self, entity, callback_function):
         if not self._is_http_only():
-            self._mqtt_connector.subscribe_topic(topic, callback_function)
+            self._mqtt_connector.subscribe_to_commands(entity, callback_function)
 
     def _is_http_only(self):
         return self._mqtt_connector is None

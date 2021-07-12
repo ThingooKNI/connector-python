@@ -27,8 +27,7 @@ connector.connect()
 
 
 def on_command(topic, payload):
-    print(topic)
-    print(str(payload))
+    print(payload)
 
 
 # Send readings

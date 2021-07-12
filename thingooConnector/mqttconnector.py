@@ -2,7 +2,7 @@ import logging
 
 import paho.mqtt.client as mqtt
 
-from thingooConnector.config import DEVICE_READINGS
+from thingooConnector.config import DEVICE_READINGS, DEVICE_COMMANDS
 from thingooConnector.connector import Connector
 
 logger = logging.getLogger(__name__)
@@ -57,7 +57,7 @@ class MQTTConnector(Connector):
 
     def _on_message(self, client, userdata, msg):
         topic = msg.topic
-        payload = str(msg.payload)
+        payload = msg.payload.decode("utf-8")
         if topic in self._subscriptions:
             function = self._subscriptions[topic]
             if function is not None:
@@ -80,6 +80,12 @@ class MQTTConnector(Connector):
         self._client.publish(topic, reading, qos=1)
         self.subscribe_topic(topic + "/response")
         logger.info(f"Reading {reading} from entity {entity.key()} published via MQTT!")
+
+    def subscribe_to_commands(self, entity, callback_function):
+        topic = DEVICE_COMMANDS.format(
+            device_key=self._device_info.key(), entity_key=entity.key()
+        )
+        self.subscribe_topic(topic, callback_function)
 
     def subscribe_topic(self, topic, function=None):
         self._client.subscribe(topic)

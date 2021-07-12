@@ -11,9 +11,8 @@ class Entity:
         self._value_type = value_type
         self._unit_display_type = unit_display_type
 
-    @staticmethod
-    def on_command(connector, callback_function):
-        connector.subscribe_topic("/devices/testDevice3/entities/light_switch/command", callback_function)
+    def on_command(self, connector, callback_function):
+        connector.subscribe_to_commands(self, callback_function)
 
     def send_reading(self, connector, value):
         """

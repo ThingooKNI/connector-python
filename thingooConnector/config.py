@@ -3,3 +3,4 @@ READINGS = "/readings"
 DEVICES = "/devices"
 
 DEVICE_READINGS = "/devices/{device_key}/entities/{entity_key}/reading"
+DEVICE_COMMANDS = "/devices/{device_key}/entities/{entity_key}/command"
