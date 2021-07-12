@@ -14,8 +14,9 @@ def data_function():
 
 # Device configuration
 device_info = DeviceInfo("testDevice3", "test device")
-actuator = Entity("light_switch", "ACTUATOR", "BOOLEAN", "")
-entities = [actuator]
+light_switch = Entity("light_switch", "ACTUATOR", "BOOLEAN", "")
+heater = Entity("heater", "ACTUATOR", "BOOLEAN", "")
+entities = [light_switch, heater]
 
 # Credentials
 http_credentials = HTTPCredentials(HTTP_CLIENT_ID, HTTP_CLIENT_SECRET)
@@ -26,11 +27,16 @@ connector = ThingooConnector("dev.thingoo.xyz", device_info, entities, http_cred
 connector.connect()
 
 
-def on_command(topic, payload):
+def on_light_switch_command(topic, payload):
+    print(payload)
+
+
+def on_heater_command(topic, payload):
     print(payload)
 
 
 # Send readings
-actuator.on_command(connector, on_command)
+light_switch.on_command(connector, on_light_switch_command)
+heater.on_command(connector, on_heater_command)
 
 input()  # don't close program, wait for commands
