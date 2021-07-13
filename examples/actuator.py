@@ -6,7 +6,7 @@ from thingooConnector.mqttconnector import MQTTCredentials
 from thingooConnector.thingooconnector import ThingooConnector
 
 # Device configuration
-device_info = DeviceInfo("actuator", "actuator")
+device_info = DeviceInfo("testDevice3", "actuator")
 light_switch = Entity("light_switch", "ACTUATOR", "BOOLEAN", "")
 heater = Entity("heater", "ACTUATOR", "BOOLEAN", "")
 entities = [light_switch, heater]

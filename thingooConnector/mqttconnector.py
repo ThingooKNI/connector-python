@@ -44,10 +44,10 @@ class MQTTConnector(Connector):
         self._client.loop_start()
 
     def _on_connect(self, client, userdata, flags, rc):
-        if rc == 0:
-            logger.info("Connected to MQTT")
-        else:
+        if rc != 0:
             logger.warning(f"Connection to MQTT failed with status code: {rc}")
+            return
+        logger.info("Connected to MQTT")
         self._register()
         self._renew_subscriptions()
 
