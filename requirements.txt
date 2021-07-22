@@ -44,5 +44,5 @@ tqdm==4.57.0
 twine==3.3.0
 typed-ast==1.4.2
 typing-extensions==3.7.4.3
-urllib3==1.26.4
+urllib3==1.26.5
 webencodings==0.5.1
