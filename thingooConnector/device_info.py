@@ -1,6 +1,4 @@
-def get_mac_address():
-    # TODO Get real MAC address from device
-    return "00:00:00:00:00:00"
+from getmac import get_mac_address
 
 
 class DeviceInfo:

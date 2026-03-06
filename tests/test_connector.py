@@ -1,3 +1,5 @@
+from getmac import get_mac_address
+
 from thingooConnector.device_info import DeviceInfo
 from thingooConnector.entity import Entity
 from thingooConnector.httpconnector import HTTPCredentials, HTTPConnector
@@ -18,7 +20,7 @@ def test_json():
     connector = HTTPConnector("#", device_info, [temp, hum], credentials)
 
     data = connector._create_registration_form()
-    # FIXME Testing with real macAddress
+    mac = get_mac_address()
     if str(
-            data) != "{'key': 'test', 'macAddress': '00:00:00:00:00:00', 'displayName': 'test device', 'entities': [{'key': 'temp', 'type': 'SENSOR', 'valueType': 'DECIMAL', 'unitDisplayName': 'C'}, {'key': 'hum', 'type': 'SENSOR', 'valueType': 'DECIMAL', 'unitDisplayName': '%'}]}":
+            data) != "{'key': 'test', 'macAddress': '" + mac + "', 'displayName': 'test device', 'entities': [{'key': 'temp', 'type': 'SENSOR', 'valueType': 'DECIMAL', 'unitDisplayName': 'C'}, {'key': 'hum', 'type': 'SENSOR', 'valueType': 'DECIMAL', 'unitDisplayName': '%'}]}":
         raise AssertionError
